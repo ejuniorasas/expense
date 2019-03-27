@@ -1,0 +1,33 @@
+# docker-compose -p app -f docker-compose.yml build exp
+# docker-compose -p app -f docker-compose.yml run exp rails new . --skip-ative-records --webpacker
+# docker-compose -p app -f docker-compose.yml run exp rails webpacker:install
+# docker-compose -p app -f docker-compose.yml run exp rails g mongoid:config
+# sudo chown -R $USER exp/
+# docker-compose -p app -f docker-compose.yml run exp rails g scaffold Expense name:string description:string value:float status:integer date:date
+# bundle install --path vendor/cache to solve some dependencies problems
+version: '3'
+services:
+
+  db: 
+    image: mongo
+    # restart: always
+
+  afa:
+    build: afa
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - ./afa:/myapp:rw
+    ports:
+      - "3002:3000"
+    
+    depends_on: 
+      - db
+     
+  exp:
+    build: exp
+    command: bash -c "rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    volumes:
+      - ./exp:/myapp:rw
+    ports:
+      - "3003:3000"
+      
