@@ -8,12 +8,8 @@
         </div>
         <div class="card-body">
           <h1 class="card-title pricing-card-title"><small class="text-muted">${{last.total}}</small></h1>
-          <ul class="list-unstyled mt-3 mb-4">
-            <li>10 users included</li>
-            <li>2 GB of storage</li>
-            <li>Email support</li>
-            <li>Help center access</li>
-          </ul>
+          <polarchart cssClasses="mt-3 mb-4" :chartData="last.category"></polarchart>
+          
           <button type="button" class="btn btn-lg btn-block btn-outline-primary">Sign up for free</button>
         </div>
       </div>
@@ -53,9 +49,14 @@
 </template>
 
 <script>
+import Polarchart from './chart.vue'
 export default {
     props: {
         expenses: Object,
+    },
+
+    components: {
+      polarchart: Polarchart,
     },
 
     data: function () {
@@ -68,7 +69,7 @@ export default {
 
     methods: {
       calculeTotal(items) {
-        let summarize = {quantity: items.length, total: 0.0, show: false, category: {}};
+        let summarize = {quantity: items.length, total: 0.0, show: false, category: {labels: [], quantities:[], values:[]}};
         items.map(item =>{
           let tags = item.tags && item.tags.length >0 ? item.tags : ['no tag'];
           summarize.total += item.value;
@@ -78,9 +79,15 @@ export default {
           }
 
           tags.map(tag =>{
-            summarize.category[tag] = summarize.category[tag] ? 
-                summarize.category[tag]: 0;
-            summarize.category[tag]++;
+            let position = summarize.category.labels.indexOf(tag);
+            if(position === -1) {
+              summarize.category.quantities.push(1);
+              summarize.category.labels.push(tag);
+              summarize.category.values.push(0.00 + item.value);
+            } else {
+              summarize.category.quantity[position] = summarize.category.quantity[position] + 1;
+              summarize.category.value[position] = summarize.category.value[position] + item.value;
+            }
           });
 
         });
