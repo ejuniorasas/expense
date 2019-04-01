@@ -8,7 +8,7 @@ export default {
     data: function() {
         return { 
             data:{
-                labels: this.chartData,
+                labels: this.chartData.labels,
                 datasets: [
                     { 
                         data: this.chartData.values,
@@ -20,20 +20,21 @@ export default {
             options: {
 				responsive: true,
 				legend: {
-					position: 'right',
+                    display: false,
+					position: 'botton',
 				},
 				title: {
-					display: true,
-					text: this.label,
+					display: false,
+					// text: this.label,
 				},
 				scale: {
 					ticks: {
-						beginAtZero: true
+						beginAtZero: false
 					},
 					reverse: false
 				},
 				animation: {
-					animateRotate: true,
+					animateRotate: false,
 					animateScale: true
 				}
 			},
@@ -41,7 +42,7 @@ export default {
     },
     extends: PolarArea,
     mounted () {
-    this.renderChart(this.data.data, this.data.options);
+    this.renderChart(this.data, this.options);
   }
 }
 
