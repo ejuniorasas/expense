@@ -21,6 +21,7 @@ import Vue from 'vue/dist/vue.esm'
 import VueResource from 'vue-resource'
 //import App from '../app.vue'
 import Summary from './components/summary.vue'
+import ModelAddExp from './components/modal.vue'
 //
 Vue.use(TurbolinksAdapter);
 Vue.use(VueResource);
@@ -34,6 +35,7 @@ document.addEventListener('turbolinks:load', () => {
     el: '[data-behavior="vue"]',
     components: {
         sum: Summary,
+        modal: ModelAddExp,
     }
   })
 })
