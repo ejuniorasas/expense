@@ -1,9 +1,10 @@
 <p id="notice"><%= notice %></p>
 
 <h1>Expenses</h1>
-<modal :show='false'></modal>
+<modal :show='show' @close="show=false"></modal>
+<button type="button" class="btn btn-info btn-lg" @click="show = true">Open Modal</button>
 
-  <summary-exp :expenses='<%=@expenses_summary.to_json%>'></summary-exp>
+  <sum :expenses='<%=@expenses_summary.to_json%>'></sum>
   
   <div class="row">
     <table>

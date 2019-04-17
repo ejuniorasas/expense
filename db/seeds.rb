@@ -18,7 +18,9 @@ puts "Clan created: #{clan.name}"
 users = []
 3.times do |u|
     User.where(name: "User_#{u}").destroy
-    users.push(User.create!(name: "User_#{u}", email:'email@email.com', status: 0, clan: clan))
+    user = User.create!(name: "User_#{u}", email:'email@email.com', status: 0, clan: clan)
+    Tag.create!(tag: tags[rand(tags.size)], user: user)
+    users.push(user)
 end
 4.times do |month|
     12.times do |i|

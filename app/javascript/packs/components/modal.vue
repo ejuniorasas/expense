@@ -1,41 +1,77 @@
 <template>
-    <transition name="modal modal-mask" @click="close" v-show="show">
-      <div class="card">
-        <div class="card-header">
-          <slot name="header"> Add new Expense</slot>
-        </div>
-        <div class="card-body">
-
-        </div>
-        <div class="card-footer">
-
-        </div>
-      
-      </div>
-
-
-        <!-- <div class="modal-mask" @click="close" v-show="show">
+    <transition name="modal">
+        <div class="modal-mask" @click="close" v-show="show">
             <div class="modal-container" @click.stop>
                 <div class="modal-header">
-                    <h3>New Post</h3>
+                    <slot name="header">
+                        <h3>Add Expense</h3>
+                    </slot>
                 </div>
                 <div class="modal-body">
-                    <label class="form-label">
-                        Title
-                        <input class="form-control">
-                    </label>
-                    <label class="form-label">
-                        Body
-                        <textarea rows="5" class="form-control"></textarea>
-                    </label>
+
+                    <div class="form-group">
+                        <label for="name">Expense</label>
+                        <input type="text" class="form-control" id="name" aria-describedby="nameHelp" v-model="expense.name" placeholder="Enter an expense name">
+                        <small id="nameHelp" class="form-text text-muted">A name that could be easy to identify the expense.</small>
+                    </div>
+                    <div class="form-row">
+                        <div>
+                            <label for="value" >Value: </label>
+                        </div>
+                        <div>
+                            <input type="number" class="form-control" name="value" id="value" required step=".01" v-model="expense.value">
+                        </div>
+                        <div>
+                            <label for="value" >Status: </label>
+                        </div>
+                        <div>
+                            <select name="status" id="status" v-model="expense.status" class="form-control">
+                                <option value="0">Created</option>
+                                <option value="1">Payed</option>
+                                <option value="2">Canceled</option>
+                                <option value="3">Removed</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="value" >Date: </label>
+                        </div>
+                        <div>
+                            <input type="date" name="date" id="date" v-model="expense.date" class="form-control">
+                        </div>
+                        <div>
+                            <label for="value" >Tags: </label>
+                        </div>
+                        <div>
+                            <tags v-model="expense.tags" :autocomplete-items="userTags" ></tags>
+                        </div>
+
+                    </div> 
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" rows="3"></textarea>
+                    </div>
+
                 </div>
-                <div class="modal-footer text-right">
-                    <button class="modal-default-button" @click="savePost()">
-                        Save
-                    </button>
+                
+                <div class="modal-footer">
+                    <div class="col-md-6">
+                        <div class="text-left">
+                            <button class="modal-default-button" @click="close()">
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="text-right">
+                            <button class="modal-default-button" @click="addExp()">
+                                Save
+                            </button>
+                        </div>
+                    </div>
                 </div>
+                
             </div>
-        </div> -->
+        </div>
     </transition>
 </template>
 
@@ -56,7 +92,7 @@
 }
 
 .modal-container {
-    width: 300px;
+    width: 50%;
     margin: 40px auto 0;
     padding: 20px 30px;
     background-color: #fff;
@@ -79,6 +115,10 @@
     text-align: right;
 }
 
+.text-left {
+    text-align: left;
+}
+
 .form-label {
     display: block;
     margin-bottom: 1em;
@@ -88,13 +128,13 @@
     margin-top: 0.5em;
 }
 
-.form-control {
+/* .form-control {
     display: block;
     width: 100%;
     padding: 0.5em 1em;
     line-height: 1.5;
     border: 1px solid #ddd;
-}
+} */
 
 /*
  * The following styles are auto-applied to elements with
@@ -120,15 +160,53 @@
 }
 </style>
 
-<script>
+<script>      
+
+import VueTagsInput from '@johmun/vue-tags-input';
+
 export default {
     name: 'modal',
-    props: ['show'],
+    props: {
+        show: Boolean,
+        exp: Object,
+    },
+     data: function () {
+         let new_exp = this.exp || {name: '', description: '', value: 0.00, status: 0, date: new Date(), tags:[]}
+        return {
+            expense: {
+                new_exp,
+            }, 
+        }
+    },
     methods: {
         close() {
           console.log('Close...');
             this.$emit('close');
         },
+        addExp() {
+            this.close();
+        },
     },
+
+    computed: {
+        userTags(){
+            console.log('Tags called');
+            this.$http.get('/tags/')
+            .then(result =>{console.log(result.body); return resutl.body})
+            .catch( err => {console.log(err)});
+        },
+    },
+
+    mounted() {
+        console.log('Mounted...');
+        document.addEventListener("keydown", (e) => {
+            if (this.show && e.keyCode == 27) {
+              this.close();
+            }
+        });
+    },
+    components: {
+        tags: VueTagsInput,
+    }
 }
 </script>

@@ -8,6 +8,7 @@ class User
   field :status, type: Integer
     
   has_many :expenses
+  has_many :tags
 
   belongs_to :clan
 

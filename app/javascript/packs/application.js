@@ -22,17 +22,19 @@ import VueResource from 'vue-resource'
 //import App from '../app.vue'
 import Summary from './components/summary.vue'
 import ModelAddExp from './components/modal.vue'
+
 //
 Vue.use(TurbolinksAdapter);
 Vue.use(VueResource);
-
-Vue.component('summary-exp', Summary);
 
 document.addEventListener('turbolinks:load', () => {
   Vue.http.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   //axios.headers.common['X-CSRF-Token'] = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
   const app = new Vue({
     el: '[data-behavior="vue"]',
+    data: {
+      show: false,
+    },
     components: {
         sum: Summary,
         modal: ModelAddExp,
