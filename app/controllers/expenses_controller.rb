@@ -4,8 +4,10 @@ class ExpensesController < ApplicationController
   # GET /expenses
   # GET /expenses.json
   def index
-    @expenses = Expense.all
-    @expenses_summary = {last: Expense.last_month, current: Expense.current_month, next: Expense.next_month}
+    @expenses = Expense.where(clan: @user.clan)
+    @expenses_summary = {last: Expense.filter_month(Date.today.last_month, @user.clan), 
+                         current: Expense.filter_month(Date.today, @user.clan), 
+                         next: Expense.filter_month(Date.today.next_month, @user.clan)}
   end
 
   # GET /expenses/1

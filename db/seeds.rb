@@ -8,8 +8,9 @@
 
 tags = %w[Laser Viagen Compras Estudo Transport Alimentacion Bebida]
 
-clan = Clan.where(name: 'Clan test')
-clan.destroy
+Clan.where(name: 'Clan first').destroy
+
+Clan.where(name: 'Clan test').destroy
 
 clan = Clan.create!(name: 'Clan test', description: 'Clan created automatic...', status: 0)
 
@@ -19,7 +20,7 @@ users = []
 3.times do |u|
     User.where(name: "User_#{u}").destroy
     user = User.create!(name: "User_#{u}", email:'email@email.com', status: 0, clan: clan)
-    Tag.create!(tag: tags[rand(tags.size)], user: user)
+    Tag.create!(tag: tags[rand(tags.size)], user: user, clan: clan)
     users.push(user)
 end
 4.times do |month|

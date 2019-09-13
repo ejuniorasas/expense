@@ -9,5 +9,6 @@ class Clan
     
     has_many :expenses
     has_many :users
+    has_many :tags  
 
 end

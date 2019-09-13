@@ -1,3 +1,5 @@
+// http://www.vue-tags-input.com/#/examples/autocomplete
+
 <template>
     <transition name="modal">
         <div class="modal-mask" @click="close" v-show="show">
@@ -6,6 +8,7 @@
                     <slot name="header">
                         <h3>Add Expense</h3>
                     </slot>
+                <pre> {{expense}} </pre>
                 </div>
                 <div class="modal-body">
 
@@ -15,34 +18,36 @@
                         <small id="nameHelp" class="form-text text-muted">A name that could be easy to identify the expense.</small>
                     </div>
                     <div class="form-row">
-                        <div>
+                        <div class="col-md-1"> 
                             <label for="value" >Value: </label>
                         </div>
-                        <div>
+                        <div class="col-md-2">
                             <input type="number" class="form-control" name="value" id="value" required step=".01" v-model="expense.value">
                         </div>
-                        <div>
-                            <label for="value" >Status: </label>
+                        <div class="col-md-1">
+                            <label for="status">Status: </label>
                         </div>
-                        <div>
+                        <div class="col-md-3">
                             <select name="status" id="status" v-model="expense.status" class="form-control">
-                                <option value="0">Created</option>
-                                <option value="1">Payed</option>
-                                <option value="2">Canceled</option>
-                                <option value="3">Removed</option>
+                                <option value=0 >Created</option>
+                                <option value=1 >Payed</option>
+                                <option value=2 >Canceled</option>
+                                <option value=3 >Removed</option>
                             </select>
                         </div>
-                        <div>
-                            <label for="value" >Date: </label>
+                        <div class="col-md-1">
+                            <label for="date">Date: </label>
                         </div>
-                        <div>
+                        <div class="col-md-4">
                             <input type="date" name="date" id="date" v-model="expense.date" class="form-control">
                         </div>
-                        <div>
-                            <label for="value" >Tags: </label>
+                    </div>
+                    <div class="form-row">
+                        <div class="col-md-1">
+                            <label for="tags" class="col-form-label">Tags: </label>
                         </div>
-                        <div>
-                            <tags v-model="expense.tags" :autocomplete-items="userTags" ></tags>
+                        <div class="form-control col-md-11">
+                            <tags class="form-control col-md-11" id="tags" v-model="tag" :tags= "expense.tags" :autocomplete-items="filteredItems"></tags>
                         </div>
 
                     </div> 
@@ -119,12 +124,12 @@
     text-align: left;
 }
 
-.form-label {
+label {
     display: block;
     margin-bottom: 1em;
 }
 
-.form-label > .form-control {
+label > .form-control {
     margin-top: 0.5em;
 }
 
@@ -171,11 +176,18 @@ export default {
         exp: Object,
     },
      data: function () {
-         let new_exp = this.exp || {name: '', description: '', value: 0.00, status: 0, date: new Date(), tags:[]}
+         let new_exp = this.exp || {name: 'neww', description: '', value: 0.00, status: 0, date: new Date(), tags:[]}
         return {
             expense: {
-                new_exp,
+                name: new_exp.name,
+                description: new_exp.description, 
+                value: new_exp.value, 
+                status: new_exp.status, 
+                date: new_exp.date, 
+                tags: new_exp.tags,
             }, 
+            user_tags: [],
+            tag: '',
         }
     },
     methods: {
@@ -186,15 +198,22 @@ export default {
         addExp() {
             this.close();
         },
-    },
-
-    computed: {
         userTags(){
-            console.log('Tags called');
             this.$http.get('/tags/')
-            .then(result =>{console.log(result.body); return resutl.body})
+            .then(result =>{console.log(result.body); this.user_tags = result.body})
             .catch( err => {console.log(err)});
         },
+    },
+
+    watch: {
+        show: function () {
+            console.log('show was changed');
+            if (this.show){
+                console.log('Show is true');
+                this.userTags();
+            }
+            console.log('Finish watch....')
+        }
     },
 
     mounted() {
@@ -204,6 +223,11 @@ export default {
               this.close();
             }
         });
+    },
+    computed: {
+        filteredItems() {
+          return this.user_tags.filter(i => i.text.toLowerCase().includes(this.tag.toLowerCase()));
+        }
     },
     components: {
         tags: VueTagsInput,

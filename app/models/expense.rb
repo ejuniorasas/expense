@@ -13,8 +13,7 @@ class Expense
   belongs_to :clan
   belongs_to :user
   
-  scope :last_month, -> {where date:( Date.today.last_month.beginning_of_month .. Date.today.last_month.end_of_month)}
-  scope :current_month, -> {where date:( Date.today.beginning_of_month .. Date.today.end_of_month)}
-  scope :next_month, -> {where date:( Date.today.next_month.beginning_of_month .. Date.today.next_month.end_of_month)}
-  
+  scope :filter_month, ->(date_filter, current_clan) {where date:( date_filter.beginning_of_month .. date_filter.end_of_month), clan: current_clan}
+
+
 end

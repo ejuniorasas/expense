@@ -3,6 +3,7 @@ class Tag
 
   field :tag, type: String
   
+  belongs_to :clan
   belongs_to :user
 
 end
